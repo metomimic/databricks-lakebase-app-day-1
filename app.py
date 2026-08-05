@@ -171,9 +171,11 @@ def add_to_watchlist():
     client = MassiveClient()
     try:
         data = client.get_latest_price(symbol)  # <-- single API call, latest price only
-    except requests.HTTPError:
+    # except requests.HTTPError:
         # Massive returns a 404/4xx for tickers it doesn't recognize.
-        return jsonify({"error": f"Unknown ticker symbol: {symbol}"}), 400
+        # return jsonify({"error": f"Unknown ticker symbol: {symbol}"}), 400
+    except Exception as err:
+        return jsonify({"error": f"Error fetching price for ticker: {symbol}: {err}"}), 500
 
     price = _extract_latest_price(data)
     if price is None:
