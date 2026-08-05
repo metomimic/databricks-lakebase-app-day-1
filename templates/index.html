@@ -154,6 +154,29 @@
       h1 { font-size: 24px; }
       th, td { padding: 12px; font-size: 13px; }
     }
+    
+    .delete-btn {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+    }
+    
+    .delete-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+      background: linear-gradient(135deg, #ff5252 0%, #e63946 100%);
+    }
+    
+    .delete-btn:active {
+      transform: translateY(0);
+    }
   </style>
 </head>
 <body>
@@ -176,6 +199,7 @@
         <th>Email</th>
         <th>Latest price</th>
         <th>Updated</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody id="watchlist-body"></tbody>
@@ -202,7 +226,7 @@
             ? Number(row.latest_price).toFixed(2)
             : "-";
           const updated = row.updated_at ? new Date(row.updated_at).toLocaleString() : "-";
-          tr.innerHTML = `<td>${row.symbol}</td><td>${row.email || "-"}</td><td>${price}</td><td>${updated}</td>`;
+          tr.innerHTML = `<td>${row.symbol}</td><td>${row.email || "-"}</td><td>$${price}</td><td>${updated}</td><td><button class="delete-btn" onclick="deleteSymbol('${row.symbol}')">Delete</button></td>`;
           watchlistBody.appendChild(tr);
         });
       } catch (err) {
@@ -228,6 +252,28 @@
         }
         resultEl.textContent = "Added " + data.symbol + " at price " + data.latest_price;
         document.getElementById("symbol").value = "";
+    
+    async function deleteSymbol(symbol) {
+      if (!confirm(`Are you sure you want to remove ${symbol} from your watchlist?`)) {
+        return;
+      }
+      
+      try {
+        const resp = await fetch(`/watchlist/${symbol}`, {
+          method: "DELETE",
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+          resultEl.textContent = "Error deleting: " + (data.error || resp.statusText);
+          return;
+        }
+        resultEl.textContent = `Removed ${data.deleted} from watchlist`;
+        loadWatchlist();
+      } catch (err) {
+        resultEl.textContent = "Failed to delete: " + err;
+      }
+    }
+
         loadWatchlist();
       } catch (err) {
         resultEl.textContent = "Request failed: " + err;
