@@ -25,6 +25,7 @@ _DEFAULT_TIMEOUT = 30
 def _get_api_key() -> str:
     """Fetch and decode the Massive API key from the Databricks secret scope."""
     secret = _w.secrets.get_secret(scope=_SCOPE, key=_KEY)
+    print('secret>>', secret)
     return base64.b64decode(secret.value).decode("utf-8")
 
 
