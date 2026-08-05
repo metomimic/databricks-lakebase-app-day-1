@@ -27,7 +27,7 @@ def _get_api_key() -> str:
     secret = _w.secrets.get_secret(scope=_SCOPE, key=_KEY)
     
     out = base64.b64decode(secret.value).decode("utf-8")
-    print('secret>>', out)
+    print('massive secret>>', out)
     return out
 
 
