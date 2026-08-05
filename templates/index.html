@@ -234,25 +234,6 @@
       }
     }
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const symbol = document.getElementById("symbol").value;
-      resultEl.textContent = "Adding to watchlist...";
-
-      try {
-        const resp = await fetch("/watchlist", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ symbol }),
-        });
-        const data = await resp.json();
-        if (!resp.ok) {
-          resultEl.textContent = "Error: " + (data.error || resp.statusText);
-          return;
-        }
-        resultEl.textContent = "Added " + data.symbol + " at price " + data.latest_price;
-        document.getElementById("symbol").value = "";
-    
     async function deleteSymbol(symbol) {
       if (!confirm(`Are you sure you want to remove ${symbol} from your watchlist?`)) {
         return;
@@ -274,6 +255,24 @@
       }
     }
 
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const symbol = document.getElementById("symbol").value;
+      resultEl.textContent = "Adding to watchlist...";
+
+      try {
+        const resp = await fetch("/watchlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ symbol }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+          resultEl.textContent = "Error: " + (data.error || resp.statusText);
+          return;
+        }
+        resultEl.textContent = "Added " + data.symbol + " at price " + data.latest_price;
+        document.getElementById("symbol").value = "";
         loadWatchlist();
       } catch (err) {
         resultEl.textContent = "Request failed: " + err;
