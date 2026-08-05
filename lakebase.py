@@ -37,6 +37,8 @@ def get_connection():
     conn = psycopg2.connect(_lakebase_url(), cursor_factory=RealDictCursor)
     try:
         yield conn
+    except Exception as e:
+        print(f'exception in connection> {e}')
     finally:
         conn.close()
 
